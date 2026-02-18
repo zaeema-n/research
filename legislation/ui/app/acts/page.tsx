@@ -10,7 +10,7 @@ import { Activity, Layers } from "lucide-react"
 import { ActsHeader } from "@/components/acts/ActsHeader"
 
 
-const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://aaf8ece1-3077-4a52-ab05-183a424f6d93-dev.e1-us-east-azure.choreoapis.dev/data-platform/legislation-be/v1.0";
 console.log(apiUrl);
 // // Fetch acts from backend
 // async function getActs() {
