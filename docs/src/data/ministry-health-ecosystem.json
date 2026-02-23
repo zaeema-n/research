@@ -225,10 +225,10 @@
       "year": 1999,
       "kind": { "major": "Legislation", "minor": "act" },
       "status": "active",
-      "analysisDepth": "catalog",
+      "analysisDepth": "deep",
       "pdfUrl": "https://documents.gov.lk/view/acts/1999/11/38-1999_E.pdf",
       "domainCategory": "hospital-mgmt",
-      "summary": "Establishes a Board for the management and administration of Vijaya Kumaratunga Memorial Hospital.",
+      "summary": "Establishes a 7-member Board (majority nominated by VK Memorial Foundation) for the management and administration of Vijaya Kumaratunga Memorial Hospital at Seeduwa. Creates a Committee of Management and dedicated Fund. Hospital operational since 1999 with 137 beds.",
       "crossReferences": ["sjgh-board-54-1983"],
       "amendments": []
     },
@@ -239,12 +239,14 @@
       "year": 2006,
       "kind": { "major": "Legislation", "minor": "act" },
       "status": "active",
-      "analysisDepth": "catalog",
-      "pdfUrl": "http://www.lawnet.gov.lk/wp-content/uploads/Law%20Site/4-stats_1956_2006/set6/2006Y0V0C27A.html",
+      "analysisDepth": "deep",
+      "pdfUrl": "https://www.nddcb.gov.lk/Docs/acts/NATA%20Act%20English.pdf",
       "domainCategory": "food-drug",
-      "summary": "Establishes the National Authority on Tobacco and Alcohol to regulate and control tobacco and alcohol use.",
-      "crossReferences": [],
-      "amendments": []
+      "summary": "Establishes NATA as a 14-member body corporate (9 ex-officio from 6 ministries + Police + Excise + NDDCB, plus 5 ministerially-appointed experts) to combat tobacco and alcohol harm. 45 sections in 2 Parts. Key prohibitions: sale to under-21s, comprehensive advertising/sponsorship ban, public smoking ban. Sri Lanka was the first Asian country to ratify the WHO FCTC. Amended by Act No. 3 of 2015 mandating 80% pictorial health warnings.",
+      "crossReferences": ["poisons-opium-drugs-17-1929"],
+      "amendments": [
+        { "actNumber": "No. 3 of 2015", "year": 2015 }
+      ]
     },
     {
       "id": "suwaseriya-foundation-18-2018",
@@ -253,10 +255,10 @@
       "year": 2018,
       "kind": { "major": "Legislation", "minor": "act" },
       "status": "active",
-      "analysisDepth": "catalog",
+      "analysisDepth": "deep",
       "pdfUrl": "https://documents.gov.lk/view/acts/2018/7/18-2018_E.pdf",
       "domainCategory": "emergency-services",
-      "summary": "Establishes the 1990 Suwaseriya Foundation for providing pre-hospital emergency ambulance services across Sri Lanka.",
+      "summary": "Establishes the 1990 Suwaseriya Foundation as a body corporate with a 7-member Board (4 appointed by President + 3 ex-officio from Health, Finance, Police). 28 sections. Provides free pre-hospital care ambulance services island-wide through 297+ ambulances covering all 9 provinces. Transitioned from GVK EMRI Lanka under a USD 22.58 million Indian Government grant. No amendments.",
       "crossReferences": [],
       "amendments": []
     },
@@ -267,10 +269,10 @@
       "year": 2015,
       "kind": { "major": "Legislation", "minor": "act" },
       "status": "active",
-      "analysisDepth": "catalog",
+      "analysisDepth": "deep",
       "pdfUrl": "https://www.lawnet.gov.lk/act-no-5-of-2015/",
       "domainCategory": "food-drug",
-      "summary": "Establishes the National Medicines Regulatory Authority for regulation of manufacture, import, and sale of medicines.",
+      "summary": "Establishes NMRA as a self-funded 13-member body corporate (3 ex-officio + 10 appointed) succeeding the CDDA. 147 sections in 7 Chapters. Regulates medicines, medical devices, borderline products, and cosmetics. Creates MEC, MDEC, BPEC evaluation committees, Pricing Committee, NMQAL, and 4 regulatory divisions. Implements the Senaka Bibile National Drug Policy. No amendments; repeals CDDA Act No. 27 of 1980.",
       "crossReferences": ["poisons-opium-drugs-17-1929"],
       "amendments": []
     },
@@ -281,12 +283,16 @@
       "year": 1961,
       "kind": { "major": "Legislation", "minor": "act" },
       "status": "active",
-      "analysisDepth": "catalog",
-      "pdfUrl": "https://diglib.natlib.lk/bitstream/handle/123456789/42201/255_CEYLON%20GOVERNMENT%20GAZETTE_1961-MAY-JUNE_AYURVEDA%20ACT_NO-31_02-06-1961_E.pdf?sequence=1&isAllowed=y",
+      "analysisDepth": "deep",
+      "pdfUrl": "https://www.parliament.lk/uploads/acts/gbills/english/3939.pdf",
       "domainCategory": "traditional-med",
-      "summary": "Provides for the development and regulation of Ayurveda practice and establishes the Ayurveda Medical Council.",
+      "summary": "Establishes 3 statutory bodies (Department of Ayurveda, Ayurveda Medical Council, Ayurveda Education & Hospital Board) for the development and regulation of 4 traditional medicine systems: Ayurveda, Siddha, Unani, and Desiya Chikitsa. ~77+ sections in 6 Parts. Commissioner-General heads the Department and chairs the Council. 3 amendments (1969, 1977, 2023) — the 2023 modernization added herbal garden registration and massage therapist regulation.",
       "crossReferences": ["homoeopathy-act-7-1970"],
-      "amendments": []
+      "amendments": [
+        { "actNumber": "No. 9 of 1969", "year": 1969 },
+        { "actNumber": "No. 7 of 1977", "year": 1977 },
+        { "actNumber": "No. 19 of 2023", "year": 2023 }
+      ]
     },
     {
       "id": "homoeopathy-act-7-1970",
@@ -294,11 +300,11 @@
       "number": "No. 7 of 1970",
       "year": 1970,
       "kind": { "major": "Legislation", "minor": "act" },
-      "status": "active",
-      "analysisDepth": "catalog",
-      "pdfUrl": "https://www.lawnet.gov.lk/homoeopathy/",
+      "status": "repealed",
+      "analysisDepth": "deep",
+      "pdfUrl": "https://lankalaw.net/wp-content/uploads/2025/02/1970Y0V0C7A.html",
       "domainCategory": "traditional-med",
-      "summary": "Provides for the regulation of homoeopathic practice and registration of homoeopathic practitioners.",
+      "summary": "Established the Homoeopathic Council (body corporate, S.2) for registration and regulation of homoeopathic practitioners, with a dedicated Homoeopathic Fund (S.39). Never amended. Repealed in its entirety by Section 50 of the Homoeopathy Act, No. 10 of 2016 after 46 years, following administrative collapse of the Council.",
       "crossReferences": ["ayurveda-act-31-1961"],
       "amendments": []
     }

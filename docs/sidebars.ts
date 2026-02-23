@@ -46,6 +46,15 @@ const sidebars: SidebarsConfig = {
               items: [
                 {
                   type: 'category',
+                  label: 'Ayurveda Act',
+                  collapsible: true,
+                  items: [
+                    'ministry-deep-dive/act-lineage/ayurveda/lineage',
+                    'ministry-deep-dive/act-lineage/ayurveda/deep-dive',
+                  ],
+                },
+                {
+                  type: 'category',
                   label: 'Food Act',
                   collapsible: true,
                   items: [
@@ -60,6 +69,15 @@ const sidebars: SidebarsConfig = {
                   items: [
                     'ministry-deep-dive/act-lineage/health-services-act/lineage',
                     'ministry-deep-dive/act-lineage/health-services-act/deep-dive',
+                  ],
+                },
+                {
+                  type: 'category',
+                  label: 'Homoeopathy Act',
+                  collapsible: true,
+                  items: [
+                    'ministry-deep-dive/act-lineage/homoeopathy/lineage',
+                    'ministry-deep-dive/act-lineage/homoeopathy/deep-dive',
                   ],
                 },
                 {
@@ -91,11 +109,29 @@ const sidebars: SidebarsConfig = {
                 },
                 {
                   type: 'category',
+                  label: 'NATA (Tobacco & Alcohol)',
+                  collapsible: true,
+                  items: [
+                    'ministry-deep-dive/act-lineage/nata/lineage',
+                    'ministry-deep-dive/act-lineage/nata/deep-dive',
+                  ],
+                },
+                {
+                  type: 'category',
                   label: 'National Health Dev. Fund',
                   collapsible: true,
                   items: [
                     'ministry-deep-dive/act-lineage/national-health-dev-fund/lineage',
                     'ministry-deep-dive/act-lineage/national-health-dev-fund/deep-dive',
+                  ],
+                },
+                {
+                  type: 'category',
+                  label: 'NMRA (Medicines Regulatory)',
+                  collapsible: true,
+                  items: [
+                    'ministry-deep-dive/act-lineage/nmra/lineage',
+                    'ministry-deep-dive/act-lineage/nmra/deep-dive',
                   ],
                 },
                 {
@@ -145,11 +181,29 @@ const sidebars: SidebarsConfig = {
                 },
                 {
                   type: 'category',
+                  label: '1990 Suwaseriya Foundation',
+                  collapsible: true,
+                  items: [
+                    'ministry-deep-dive/act-lineage/suwaseriya/lineage',
+                    'ministry-deep-dive/act-lineage/suwaseriya/deep-dive',
+                  ],
+                },
+                {
+                  type: 'category',
                   label: 'Transplantation of Human Tissues',
                   collapsible: true,
                   items: [
                     'ministry-deep-dive/act-lineage/transplantation-tissues/lineage',
                     'ministry-deep-dive/act-lineage/transplantation-tissues/deep-dive',
+                  ],
+                },
+                {
+                  type: 'category',
+                  label: 'VK Memorial Hospital Board',
+                  collapsible: true,
+                  items: [
+                    'ministry-deep-dive/act-lineage/vk-memorial-hospital/lineage',
+                    'ministry-deep-dive/act-lineage/vk-memorial-hospital/deep-dive',
                   ],
                 },
               ],
