@@ -7,15 +7,10 @@ import type {
   DashboardStats,
   Grade,
   Transfer,
-  TransferType,
   OfficerMobility,
   MobilityStats,
   GeoProfile,
   GeoPostingDetail,
-  GlobalMapData,
-  MapYearFrame,
-  MapOfficerPoint,
-  MapOfficerEntry,
 } from "./types";
 import { haversineDistance } from "./geo";
 
@@ -300,34 +295,6 @@ export function getDashboardStats(): DashboardStats {
   };
 }
 
-// ── Transfer Classification ─────────────────────────────────────────
-
-const SAME_LOCATION_THRESHOLD_KM = 0.5;
-
-function classifyTransfer(
-  fromLat: number | null,
-  fromLng: number | null,
-  toLat: number | null,
-  toLng: number | null
-): TransferType {
-  if (fromLat == null || fromLng == null || toLat == null || toLng == null) {
-    return 'unknown';
-  }
-  return haversineDistance(fromLat, fromLng, toLat, toLng) <= SAME_LOCATION_THRESHOLD_KM
-    ? 'administrative'
-    : 'geographic';
-}
-
-function areSameLocation(
-  lat1: number | null,
-  lng1: number | null,
-  lat2: number | null,
-  lng2: number | null
-): boolean {
-  if (lat1 == null || lng1 == null || lat2 == null || lng2 == null) return false;
-  return haversineDistance(lat1, lng1, lat2, lng2) <= SAME_LOCATION_THRESHOLD_KM;
-}
-
 // ── Mobility ────────────────────────────────────────────────────────
 
 export function getOfficerMobility(fileNumber: string): OfficerMobility | null {
@@ -386,13 +353,6 @@ export function getOfficerMobility(fileNumber: string): OfficerMobility | null {
       );
     }
 
-    const transferType = classifyTransfer(
-      prev.latitude ?? null,
-      prev.longitude ?? null,
-      cur.latitude ?? null,
-      cur.longitude ?? null
-    );
-
     transfers.push({
       fromYear: prev.year,
       toYear: cur.year,
@@ -405,7 +365,6 @@ export function getOfficerMobility(fileNumber: string): OfficerMobility | null {
       toLat: cur.latitude ?? null,
       toLng: cur.longitude ?? null,
       distanceKm,
-      transferType,
     });
   }
 
@@ -425,27 +384,6 @@ export function getOfficerMobility(fileNumber: string): OfficerMobility | null {
     }
   }
 
-  // Geographic-only stats (excluding administrative renames)
-  const geoTransfers = transfers.filter((t) => t.transferType === 'geographic');
-  const geoDistances = geoTransfers
-    .map((t) => t.distanceKm)
-    .filter((d): d is number => d != null);
-  const geographicTotalDistanceKm = geoDistances.reduce((a, b) => a + b, 0);
-  const geographicMaxDistanceKm = geoDistances.length > 0 ? Math.max(...geoDistances) : 0;
-  const geographicAvgDistanceKm =
-    geoDistances.length > 0 ? Math.round(geographicTotalDistanceKm / geoDistances.length) : 0;
-
-  let geographicMaxTransferDesc = "";
-  if (geographicMaxDistanceKm > 0) {
-    const maxGeoT = geoTransfers.find((t) => t.distanceKm === geographicMaxDistanceKm);
-    if (maxGeoT) {
-      geographicMaxTransferDesc = `${maxGeoT.fromInstitution} → ${maxGeoT.toInstitution}`;
-    }
-  }
-
-  const administrativeChanges = transfers.filter((t) => t.transferType === 'administrative').length;
-  const unknownTransfers = transfers.filter((t) => t.transferType === 'unknown').length;
-
   return {
     totalTransfers: transfers.length,
     totalDistanceKm,
@@ -454,13 +392,6 @@ export function getOfficerMobility(fileNumber: string): OfficerMobility | null {
     maxTransferDesc,
     transfers,
     locations: Array.from(locationMap.values()),
-    geographicTransfers: geoTransfers.length,
-    geographicTotalDistanceKm,
-    geographicAvgDistanceKm,
-    geographicMaxDistanceKm,
-    geographicMaxTransferDesc,
-    administrativeChanges,
-    unknownTransfers,
   };
 }
 
@@ -482,9 +413,7 @@ export function getOfficerGeoProfile(fileNumber: string): GeoProfile | null {
 
   if (rows.length === 0) return null;
 
-  // Group consecutive years at same location into posting stints.
-  // Two institutions at the same coordinates (within 0.5km) are merged as
-  // administrative renames, tracking alternate names.
+  // Group consecutive years at same institution into posting stints
   const postings: GeoPostingDetail[] = [];
   let currentPosting: {
     institution: string;
@@ -497,8 +426,6 @@ export function getOfficerGeoProfile(fileNumber: string): GeoProfile | null {
     grades: Set<Grade>;
     posts: Set<string>;
     institutionType: string;
-    alternateNames: Map<string, { name: string; institutionId: string | null; years: number[] }>;
-    hasMultipleNames: boolean;
   } | null = null;
 
   for (const row of rows) {
@@ -507,47 +434,13 @@ export function getOfficerGeoProfile(fileNumber: string): GeoProfile | null {
       ? currentPosting.institutionId || currentPosting.institution
       : null;
 
-    // Check if this row belongs to the same location as the current posting
-    const sameInstitution = currentPosting && instKey === prevKey;
-    const sameLocation = currentPosting && !sameInstitution && areSameLocation(
-      currentPosting.lat, currentPosting.lng,
-      row.latitude ?? null, row.longitude ?? null
-    );
-
-    if (currentPosting && (sameInstitution || sameLocation)) {
-      // Same location — extend current posting
+    if (currentPosting && instKey === prevKey) {
+      // Same institution — extend current posting
       currentPosting.years.push(row.year);
       currentPosting.grades.add(row.grade as Grade);
       if (row.normalized_post) currentPosting.posts.add(row.normalized_post);
-
-      // Track alternate name if institution changed but location is the same
-      if (sameLocation && !sameInstitution) {
-        currentPosting.hasMultipleNames = true;
-        const altKey = instKey;
-        if (!currentPosting.alternateNames.has(altKey)) {
-          // Record the original name as an alternate too (first time we detect a rename)
-          if (currentPosting.alternateNames.size === 0) {
-            const origKey = currentPosting.institutionId || currentPosting.institution;
-            currentPosting.alternateNames.set(origKey, {
-              name: currentPosting.institution,
-              institutionId: currentPosting.institutionId,
-              years: currentPosting.years.filter((y) => y < row.year),
-            });
-          }
-          currentPosting.alternateNames.set(altKey, {
-            name: row.normalized_institution,
-            institutionId: row.institution_id || null,
-            years: [],
-          });
-        }
-        currentPosting.alternateNames.get(altKey)!.years.push(row.year);
-      } else if (sameInstitution && currentPosting.alternateNames.size > 0) {
-        // Same institution continuing after renames — add year to existing alternate
-        const existing = currentPosting.alternateNames.get(instKey);
-        if (existing) existing.years.push(row.year);
-      }
     } else {
-      // New location — finalize previous and start new
+      // New institution — finalize previous and start new
       if (currentPosting) {
         postings.push(finalizePosting(currentPosting, postings));
       }
@@ -562,8 +455,6 @@ export function getOfficerGeoProfile(fileNumber: string): GeoProfile | null {
         grades: new Set([row.grade as Grade]),
         posts: new Set(row.normalized_post ? [row.normalized_post] : []),
         institutionType: row.kind_minor || "",
-        alternateNames: new Map(),
-        hasMultipleNames: false,
       };
     }
   }
@@ -647,8 +538,6 @@ function finalizePosting(
     grades: Set<Grade>;
     posts: Set<string>;
     institutionType: string;
-    alternateNames: Map<string, { name: string; institutionId: string | null; years: number[] }>;
-    hasMultipleNames: boolean;
   },
   previousPostings: GeoPostingDetail[]
 ): GeoPostingDetail {
@@ -680,8 +569,6 @@ function finalizePosting(
     institutionType: current.institutionType,
     durationYears: current.years.length,
     distanceFromPrevKm,
-    alternateNames: Array.from(current.alternateNames.values()),
-    isAdministrativeGroup: current.hasMultipleNames,
   };
 }
 
@@ -698,8 +585,6 @@ export function getMobilityStats(): MobilityStats {
     .all() as any[];
 
   let totalTransfers = 0;
-  let totalGeographicTransfers = 0;
-  let totalAdministrativeChanges = 0;
   let totalDistance = 0;
   let distanceCount = 0;
   let longDistanceCount = 0;
@@ -721,13 +606,7 @@ export function getMobilityStats(): MobilityStats {
     if (!mobility) continue;
 
     totalTransfers += mobility.totalTransfers;
-    totalGeographicTransfers += mobility.geographicTransfers;
-    totalAdministrativeChanges += mobility.administrativeChanges;
-
     for (const t of mobility.transfers) {
-      // Skip administrative renames for histogram and route stats
-      if (t.transferType === 'administrative') continue;
-
       if (t.distanceKm == null) continue;
       distanceCount++;
       totalDistance += t.distanceKm;
@@ -786,99 +665,5 @@ export function getMobilityStats(): MobilityStats {
     longDistanceTransfers: longDistanceCount,
     distanceHistogram,
     topLongDistanceRoutes,
-    totalAdministrativeChanges,
-    geographicAvgTransfersPerOfficer:
-      officerRows.length > 0
-        ? Math.round((totalGeographicTransfers / officerRows.length) * 10) / 10
-        : 0,
   };
-}
-
-// ── Global Map ──────────────────────────────────────────────────────
-
-export function getGlobalMapData(grades?: Grade[]): GlobalMapData {
-  const db = getDb();
-
-  let gradeFilter = "";
-  const bindings: any[] = [];
-  if (grades && grades.length > 0) {
-    gradeFilter = `AND s.grade IN (${grades.map(() => "?").join(",")})`;
-    bindings.push(...grades);
-  }
-
-  const rows = db
-    .prepare(
-      `SELECT s.year, s.grade, s.file_number, o.name,
-              s.institution_id, i.name AS institution_name,
-              i.latitude, i.longitude, i.district, s.normalized_post
-       FROM snapshots s
-       JOIN officers o ON o.file_number = s.file_number
-       JOIN institutions i ON i.id = s.institution_id
-       WHERE i.latitude IS NOT NULL AND i.longitude IS NOT NULL
-         ${gradeFilter}
-       ORDER BY s.year, s.grade, o.name`
-    )
-    .all(...bindings) as any[];
-
-  const totalCount = (
-    db
-      .prepare(
-        `SELECT COUNT(*) as c FROM snapshots s
-         WHERE 1=1 ${gradeFilter}`
-      )
-      .get(...bindings) as any
-  ).c;
-
-  const frameMap = new Map<number, MapOfficerPoint[]>();
-  for (const r of rows) {
-    if (!frameMap.has(r.year)) frameMap.set(r.year, []);
-    frameMap.get(r.year)!.push({
-      fileNumber: r.file_number,
-      name: r.name,
-      grade: r.grade as Grade,
-      institutionId: r.institution_id,
-      institution: r.institution_name,
-      lat: r.latitude,
-      lng: r.longitude,
-      district: r.district ?? null,
-      post: r.normalized_post ?? null,
-    });
-  }
-
-  const years = Array.from(frameMap.keys()).sort((a, b) => a - b);
-  const frames: MapYearFrame[] = years.map((year) => ({
-    year,
-    points: frameMap.get(year)!,
-  }));
-
-  return {
-    years,
-    frames,
-    excludedCount: totalCount - rows.length,
-  };
-}
-
-export function searchOfficersForMap(
-  q: string,
-  limit = 20
-): MapOfficerEntry[] {
-  const db = getDb();
-
-  const rows = db
-    .prepare(
-      `SELECT file_number, name, current_grade, first_seen_year, last_seen_year
-       FROM officers
-       WHERE name LIKE ? OR file_number LIKE ?
-       ORDER BY name
-       LIMIT ?`
-    )
-    .all(`%${q}%`, `%${q}%`, limit) as any[];
-
-  return rows.map((r) => ({
-    fileNumber: r.file_number,
-    name: r.name,
-    currentGrade: r.current_grade as Grade,
-    firstSeenYear: r.first_seen_year,
-    lastSeenYear: r.last_seen_year,
-  }));
 }

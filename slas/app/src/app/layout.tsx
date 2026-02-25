@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
-import { Users, Building2, LayoutDashboard, Route, FlaskConical, FileText } from "lucide-react";
+import { Users, Building2, LayoutDashboard, Route, FlaskConical } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "SLAS Officer Tracker",
@@ -43,7 +43,9 @@ export default function RootLayout({
               Officer records, geographic locations, and career analytics may contain inaccuracies.
               Do not treat any data as authoritative without verifying against{" "}
               <a
-                href="/sources"
+                href="https://pubad.gov.lk/web/index.php?option=com_content&view=article&id=31&Itemid=136&lang=en"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="underline font-medium hover:text-amber-900"
               >
                 official sources
@@ -73,10 +75,6 @@ export default function RootLayout({
               <NavLink href="/mobility">
                 <Route className="h-4 w-4" />
                 Mobility
-              </NavLink>
-              <NavLink href="/sources">
-                <FileText className="h-4 w-4" />
-                Sources
               </NavLink>
             </div>
           </div>
