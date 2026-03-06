@@ -227,6 +227,86 @@ const sidebars: SidebarsConfig = {
                 },
               ],
             },
+            {
+              type: 'category',
+              label: 'Education Ministry',
+              collapsible: true,
+              link: { type: 'doc', id: 'ministry-deep-dive/education/education-ministry' },
+              items: [
+                'ministry-deep-dive/education/meetings',
+                {
+                  type: 'category',
+                  label: 'Act Lineage',
+                  collapsible: true,
+                  link: { type: 'doc', id: 'ministry-deep-dive/education/act-lineage/index' },
+                  items: [
+                    {
+                      type: 'category',
+                      label: 'Assisted Schools Act',
+                      collapsible: true,
+                      items: [
+                        'ministry-deep-dive/education/act-lineage/assisted-schools-act/lineage',
+                        'ministry-deep-dive/education/act-lineage/assisted-schools-act/deep-dive',
+                      ],
+                    },
+                    {
+                      type: 'category',
+                      label: 'National Library Act',
+                      collapsible: true,
+                      items: [
+                        'ministry-deep-dive/education/act-lineage/national-library-act/lineage',
+                        'ministry-deep-dive/education/act-lineage/national-library-act/deep-dive',
+                      ],
+                    },
+                    {
+                      type: 'category',
+                      label: 'Public Examinations Act',
+                      collapsible: true,
+                      items: [
+                        'ministry-deep-dive/education/act-lineage/public-examinations-act/lineage',
+                        'ministry-deep-dive/education/act-lineage/public-examinations-act/deep-dive',
+                      ],
+                    },
+                    {
+                      type: 'category',
+                      label: 'School Development Boards Act',
+                      collapsible: true,
+                      items: [
+                        'ministry-deep-dive/education/act-lineage/school-development-boards-act/lineage',
+                        'ministry-deep-dive/education/act-lineage/school-development-boards-act/deep-dive',
+                      ],
+                    },
+                    {
+                      type: 'category',
+                      label: 'UNESCO Scholarship Fund Act',
+                      collapsible: true,
+                      items: [
+                        'ministry-deep-dive/education/act-lineage/unesco-scholarship-fund-act/lineage',
+                        'ministry-deep-dive/education/act-lineage/unesco-scholarship-fund-act/deep-dive',
+                      ],
+                    },
+                    {
+                      type: 'category',
+                      label: 'State Printing Corporation Act',
+                      collapsible: true,
+                      items: [
+                        'ministry-deep-dive/education/act-lineage/state-printing-corporation-act/lineage',
+                        'ministry-deep-dive/education/act-lineage/state-printing-corporation-act/deep-dive',
+                      ],
+                    },
+                    {
+                      type: 'category',
+                      label: 'Education Ordinance',
+                      collapsible: true,
+                      items: [
+                        'ministry-deep-dive/education/act-lineage/education-ordinance/lineage',
+                        'ministry-deep-dive/education/act-lineage/education-ordinance/deep-dive',
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
             'ministry-deep-dive/data-model',
           ]
         },
