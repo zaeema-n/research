@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "opengin-mcp"
+version = "0.1.0"
+description = "A Model Context Protocol (MCP) server for OpenGIN."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastmcp",
+    "httpx",
+    "python-dotenv",
+]
+
+[project.scripts]
+opengin-mcp = "server:main"
+
+[tool.setuptools]
+py-modules = ["server", "client", "config"]
+packages = ["tools", "prompts", "resources"]
