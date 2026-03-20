@@ -137,7 +137,7 @@ def get_entity_metadata(entity_id: str) -> Any:
 
 # ---------------------------------------------------------------------------
 # Tool: get_entity_attribute
-# POST /entities/{id}/attributes/{name}
+# GET /entities/{id}/attributes/{name}
 # ---------------------------------------------------------------------------
 
 def decode_attribute_value(value: Any) -> Any:
