@@ -103,12 +103,6 @@ def search_entities(
         if terminated:
             body["terminated"] = terminated
 
-    if not body:
-        raise ValueError(
-            "search_entities: at least one search parameter is required "
-            "(id, kind_major, name, created, or terminated)."
-        )
-
     with httpx.Client(timeout=REQUEST_TIMEOUT) as client:
         response = client.post(f"{OPENGIN_READ_API_URL}/entities/search", json=body)
     

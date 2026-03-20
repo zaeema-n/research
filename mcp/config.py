@@ -13,4 +13,7 @@ OPENGIN_READ_API_URL: str = os.environ.get(
 ).rstrip("/")
 
 # HTTP request timeout in seconds
-REQUEST_TIMEOUT: int = int(os.environ.get("OPENGIN_REQUEST_TIMEOUT", "30"))
+try:
+    REQUEST_TIMEOUT: int = int(os.environ.get("OPENGIN_REQUEST_TIMEOUT", "30"))
+except ValueError:
+    REQUEST_TIMEOUT: int = 30 # Fallback to default
