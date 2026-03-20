@@ -32,18 +32,18 @@ All other entities are reachable from this root via relationships.
 ## Graph Hierarchy
 
   government
-    └── citizen (AS_MINISTER / AS_PRESIDENT / AS_PRIME_MINISTER)
-          └── cabinetMinister / stateMinister (AS_APPOINTED)
+    └── citizen (AS_PRESIDENT)
+          └── cabinetMinister / stateMinister (AS_MINISTER)
+                └── citizen (AS_APPOINTED)
                 └── department (AS_DEPARTMENT)
-                      └── citizen
                 cabinetMinister / stateMinister
                       └── parentCategory (AS_CATEGORY)
-                            └── childCategory → childCategory → ... → tabular (Dataset)
+                            └── childCategory → childCategory (AS_CATEGORY) → ... → tabular (IS_ATTRIBUTE)
                 department
                       └── parentCategory (AS_CATEGORY)
-                            └── childCategory → childCategory → ... → tabular (Dataset)
+                            └── childCategory → childCategory (AS_CATEGORY) → ... → tabular (IS_ATTRIBUTE)
     └── extgztperson / extgztorg (AS_DOCUMENT)
-          └── extgztperson / extgztorg (REFERS_TO / MERGED_INTO)
+          └── extgztperson / extgztorg (REFERS_TO / AMENDS)
 
 ## Relationship Types
 
@@ -68,8 +68,10 @@ All other entities are reachable from this root via relationships.
 - To find all ministers, search for kind.major = "Organisation" and kind.minor = "cabinetMinister" or "stateMinister".
 - To find datasets under a minister or department, traverse: entity → AS_CATEGORY → parentCategory → childCategory → ... → tabular.
 - Use direction = "OUTGOING" to follow a relationship forward, "INCOMING" to find what points to an entity.
-- Tabular datasets (Dataset/tabular) can be filtered with row-level `records` filters and column `fields` selectors.
 """
+
+# Add to schema once merged
+# - Tabular datasets (Dataset/tabular) can be filtered with row-level `records` filters and column `fields` selectors.
 
 
 def register(mcp):
