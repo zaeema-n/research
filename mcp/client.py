@@ -2,11 +2,49 @@
 HTTP client for the OpenGIN Read API.
 Each function maps to one API endpoint.
 """
+
+import json
+import binascii
+import logging
 from typing import Any
 
 import httpx
+from google.protobuf.wrappers_pb2 import StringValue
 
 from config import OPENGIN_READ_API_URL, REQUEST_TIMEOUT
+
+logger = logging.getLogger(__name__)
+
+def decode_protobuf_name(name: str) -> str:
+    """
+    Decodes the protobuf-wrapped name returned by the OpenGIN API.
+    Handles hex string -> bytes -> StringValue proto or raw UTF-8.
+    If decoding fails, returns the original string to avoid data loss.
+    """
+    try:
+        data = json.loads(name)
+        hex_value = data.get("value")
+        if not hex_value:
+            logger.warning(f"Failed to decode name protobuf: {name}")
+            return name
+
+        decoded_bytes = binascii.unhexlify(hex_value)
+
+        sv = StringValue()
+        try:
+            # Try parsing as a StringValue protobuf
+            sv.ParseFromString(decoded_bytes)
+            if sv.value.strip() == "":
+                return decoded_bytes.decode("utf-8", errors="ignore").strip()
+            return sv.value.strip()
+        except Exception:
+            # Fallback to UTF-8 decoding if not a valid proto string
+            decoded_str = decoded_bytes.decode("utf-8", errors="ignore")
+            cleaned = "".join(ch for ch in decoded_str if ch.isprintable())
+            return cleaned.strip()
+    except Exception as e:
+        logger.warning(f"Failed to decode name protobuf (Error: {e}): {name}")
+        return name
 
 
 def _handle_response(response: httpx.Response, context: str) -> Any:
@@ -71,7 +109,13 @@ def search_entities(
 
     with httpx.Client(timeout=REQUEST_TIMEOUT) as client:
         response = client.post(f"{OPENGIN_READ_API_URL}/entities/search", json=body)
-    return _handle_response(response, "search_entities")
+    
+    result = _handle_response(response, "search_entities")
+    # Manually decode protobuf names if present
+    for item in result.get("body", []):
+        if "name" in item:
+            item["name"] = decode_protobuf_name(item["name"])
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -82,7 +126,11 @@ def search_entities(
 def get_entity_metadata(entity_id: str) -> Any:
     with httpx.Client(timeout=REQUEST_TIMEOUT) as client:
         response = client.get(f"{OPENGIN_READ_API_URL}/entities/{entity_id}/metadata")
-    return _handle_response(response, "get_entity_metadata")
+    
+    result = _handle_response(response, "get_entity_metadata")
+    if isinstance(result, dict) and "name" in result:
+        result["name"] = decode_protobuf_name(result["name"])
+    return result
 
 
 # ---------------------------------------------------------------------------
@@ -159,4 +207,11 @@ def get_entity_relations(
     url = f"{OPENGIN_READ_API_URL}/entities/{entity_id}/relations"
     with httpx.Client(timeout=REQUEST_TIMEOUT) as client:
         response = client.post(url, json=body)
-    return _handle_response(response, "get_entity_relations")
+    
+    result = _handle_response(response, "get_entity_relations")
+    # Decode names in relation objects (returned as a list)
+    if isinstance(result, list):
+        for item in result:
+            if isinstance(item, dict) and "name" in item:
+                item["name"] = decode_protobuf_name(item["name"])
+    return result
