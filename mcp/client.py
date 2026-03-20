@@ -10,6 +10,8 @@ from typing import Any
 
 import httpx
 from google.protobuf.wrappers_pb2 import StringValue
+from google.protobuf.struct_pb2 import Struct as ProtoStruct
+from google.protobuf.json_format import MessageToDict
 
 from config import OPENGIN_READ_API_URL, REQUEST_TIMEOUT
 
@@ -138,6 +140,66 @@ def get_entity_metadata(entity_id: str) -> Any:
 # POST /entities/{id}/attributes/{name}
 # ---------------------------------------------------------------------------
 
+def decode_attribute_value(value: Any) -> Any:
+    """
+    Decode an attribute value returned by the OpenGIN API.
+
+    The API wraps attribute values as a JSON string with shape:
+        {"typeUrl": "type.googleapis.com/...", "value": "<hex>"}
+
+    Supported typeUrls:
+      - google.protobuf.Struct  → decoded to a plain Python dict
+      - google.protobuf.StringValue → decoded via decode_protobuf_name
+
+    Falls back to returning the raw value string on any error.
+    """
+    if not isinstance(value, str):
+        return value
+    try:
+        wrapper = json.loads(value)
+    except (json.JSONDecodeError, TypeError):
+        # Not JSON — treat as a plain string
+        return value
+
+    if not isinstance(wrapper, dict):
+        return value
+
+    type_url = wrapper.get("typeUrl", "")
+    hex_value = wrapper.get("value", "")
+
+    if not hex_value:
+        logger.warning(f"decode_attribute_value: empty hex payload for typeUrl={type_url!r}")
+        return value
+
+    try:
+        raw_bytes = binascii.unhexlify(hex_value)
+    except (binascii.Error, ValueError) as e:
+        logger.warning(f"decode_attribute_value: hex decode failed ({e}) for typeUrl={type_url!r}")
+        return value
+
+    if "google.protobuf.Struct" in type_url:
+        try:
+            proto = ProtoStruct()
+            proto.ParseFromString(raw_bytes)
+            return MessageToDict(proto)
+        except Exception as e:
+            logger.warning(f"decode_attribute_value: Struct parse failed ({e})")
+            return value
+
+    if "google.protobuf.StringValue" in type_url:
+        sv = StringValue()
+        try:
+            sv.ParseFromString(raw_bytes)
+            return sv.value.strip()
+        except Exception as e:
+            logger.warning(f"decode_attribute_value: StringValue parse failed ({e})")
+            return value
+
+    # Unknown typeUrl — return the hex string as-is so no data is lost
+    logger.warning(f"decode_attribute_value: unhandled typeUrl={type_url!r}, returning value as-is")
+    return value
+
+
 def get_entity_attribute(
     entity_id: str,
     attribute_name: str,
@@ -145,24 +207,37 @@ def get_entity_attribute(
     start_time: str | None = None,
     end_time: str | None = None,
     fields: list[str] | None = None,
-    records: list[dict] | None = None,
 ) -> Any:
     params: dict = {}
     if start_time:
         params["startTime"] = start_time
     if end_time:
         params["endTime"] = end_time
-
-    body: dict = {}
     if fields:
-        body["fields"] = fields
-    if records:
-        body["records"] = records
+        params["fields"] = fields
 
     url = f"{OPENGIN_READ_API_URL}/entities/{entity_id}/attributes/{attribute_name}"
     with httpx.Client(timeout=REQUEST_TIMEOUT) as client:
-        response = client.post(url, params=params, json=body)
-    return _handle_response(response, "get_entity_attribute")
+        response = client.get(url, params=params)
+
+    result = _handle_response(response, "get_entity_attribute")
+
+    if isinstance(result, dict) and "value" in result:
+        result["value"] = decode_attribute_value(result["value"])
+    return result
+
+
+# def _process_attribute_value(val: Any) -> Any:
+#     """Helper to decode simple strings or tabular data in attributes."""
+#     if isinstance(val, str):
+#         return decode_protobuf_name(val)
+#     elif isinstance(val, list):
+#         for row in val:
+#             if isinstance(row, dict):
+#                 for k, v in row.items():
+#                     if isinstance(v, str):
+#                         row[k] = decode_protobuf_name(v)
+#     return val
 
 
 # ---------------------------------------------------------------------------
