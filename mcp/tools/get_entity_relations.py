@@ -34,7 +34,8 @@ def register(mcp):
           - `name` (optional): filter by relationship name (e.g. "AS_MINISTER", "AS_DEPARTMENT")
           - `direction` (optional): OUTGOING (entity → other) or INCOMING (other → entity)
           - `active_at` (optional): ISO 8601 — return only relationships active at this exact moment
-          - `start_time` / `end_time` (optional): ISO 8601 — return relationships within this time range
+          - `start_time` (optional): ISO 8601 — return relationships which started at this time
+          - `end_time` (optional): ISO 8601 — return relationships which ended at this time
 
         IMPORTANT: `active_at` and `start_time`/`end_time` are mutually exclusive — use one or the
         other, never both.
