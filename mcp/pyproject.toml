@@ -19,5 +19,5 @@ dependencies = [
 opengin-mcp = "server:main"
 
 [tool.setuptools]
-py-modules = ["server", "client", "config"]
+py-modules = ["server", "client", "config", "utils"]
 packages = ["tools", "prompts", "resources"]

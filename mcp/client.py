@@ -3,74 +3,15 @@ HTTP client for the OpenGIN Read API.
 Each function maps to one API endpoint.
 """
 
-import json
-import binascii
 import logging
 from typing import Any
 
 import httpx
-from google.protobuf.wrappers_pb2 import StringValue
-from google.protobuf.struct_pb2 import Struct as ProtoStruct
-from google.protobuf.json_format import MessageToDict
 
 from config import OPENGIN_READ_API_URL, REQUEST_TIMEOUT
+from utils import decode_protobuf_name, decode_attribute_value, handle_response
 
 logger = logging.getLogger(__name__)
-
-def decode_protobuf_name(name: str) -> str:
-    """
-    Decodes the protobuf-wrapped name returned by the OpenGIN API.
-    Handles hex string -> bytes -> StringValue proto or raw UTF-8.
-    If decoding fails, returns the original string to avoid data loss.
-    """
-    try:
-        data = json.loads(name)
-        hex_value = data.get("value")
-        if not hex_value:
-            logger.warning(f"Failed to decode name protobuf: {name}")
-            return name
-
-        decoded_bytes = binascii.unhexlify(hex_value)
-
-        sv = StringValue()
-        try:
-            # Try parsing as a StringValue protobuf
-            sv.ParseFromString(decoded_bytes)
-            if sv.value.strip() == "":
-                return decoded_bytes.decode("utf-8", errors="ignore").strip()
-            return sv.value.strip()
-        except Exception:
-            # Fallback to UTF-8 decoding if not a valid proto string
-            decoded_str = decoded_bytes.decode("utf-8", errors="ignore")
-            cleaned = "".join(ch for ch in decoded_str if ch.isprintable())
-            return cleaned.strip()
-    except Exception as e:
-        logger.warning(f"Failed to decode name protobuf (Error: {e}): {name}")
-        return name
-
-
-def _handle_response(response: httpx.Response, context: str) -> Any:
-    """
-    Raise a descriptive error if the response is not 2xx,
-    otherwise return the parsed JSON body.
-    """
-    if response.status_code == 404:
-        raise ValueError(f"{context}: entity not found (404)")
-    if response.status_code == 400:
-        detail = _safe_json(response).get("error", response.text)
-        raise ValueError(f"{context}: bad request — {detail}")
-    if not response.is_success:
-        raise ValueError(
-            f"{context}: API returned {response.status_code} — {response.text}"
-        )
-    return response.json()
-
-
-def _safe_json(response: httpx.Response) -> dict:
-    try:
-        return response.json()
-    except Exception:
-        return {}
 
 
 # ---------------------------------------------------------------------------
@@ -105,9 +46,8 @@ def search_entities(
 
     with httpx.Client(timeout=REQUEST_TIMEOUT) as client:
         response = client.post(f"{OPENGIN_READ_API_URL}/entities/search", json=body)
-    
-    result = _handle_response(response, "search_entities")
-    # Manually decode protobuf names if present
+
+    result = handle_response(response, "search_entities")
     for item in result.get("body", []):
         if "name" in item:
             item["name"] = decode_protobuf_name(item["name"])
@@ -122,8 +62,8 @@ def search_entities(
 def get_entity_metadata(entity_id: str) -> Any:
     with httpx.Client(timeout=REQUEST_TIMEOUT) as client:
         response = client.get(f"{OPENGIN_READ_API_URL}/entities/{entity_id}/metadata")
-    
-    result = _handle_response(response, "get_entity_metadata")
+
+    result = handle_response(response, "get_entity_metadata")
     if isinstance(result, dict) and "name" in result:
         result["name"] = decode_protobuf_name(result["name"])
     return result
@@ -133,66 +73,6 @@ def get_entity_metadata(entity_id: str) -> Any:
 # Tool: get_entity_attribute
 # GET /entities/{id}/attributes/{name}
 # ---------------------------------------------------------------------------
-
-def decode_attribute_value(value: Any) -> Any:
-    """
-    Decode an attribute value returned by the OpenGIN API.
-
-    The API wraps attribute values as a JSON string with shape:
-        {"typeUrl": "type.googleapis.com/...", "value": "<hex>"}
-
-    Supported typeUrls:
-      - google.protobuf.Struct  → decoded to a plain Python dict
-      - google.protobuf.StringValue → decoded via decode_protobuf_name
-
-    Falls back to returning the raw value string on any error.
-    """
-    if not isinstance(value, str):
-        return value
-    try:
-        wrapper = json.loads(value)
-    except (json.JSONDecodeError, TypeError):
-        # Not JSON — treat as a plain string
-        return value
-
-    if not isinstance(wrapper, dict):
-        return value
-
-    type_url = wrapper.get("typeUrl", "")
-    hex_value = wrapper.get("value", "")
-
-    if not hex_value:
-        logger.warning(f"decode_attribute_value: empty hex payload for typeUrl={type_url!r}")
-        return value
-
-    try:
-        raw_bytes = binascii.unhexlify(hex_value)
-    except (binascii.Error, ValueError) as e:
-        logger.warning(f"decode_attribute_value: hex decode failed ({e}) for typeUrl={type_url!r}")
-        return value
-
-    if "google.protobuf.Struct" in type_url:
-        try:
-            proto = ProtoStruct()
-            proto.ParseFromString(raw_bytes)
-            return MessageToDict(proto)
-        except Exception as e:
-            logger.warning(f"decode_attribute_value: Struct parse failed ({e})")
-            return value
-
-    if "google.protobuf.StringValue" in type_url:
-        sv = StringValue()
-        try:
-            sv.ParseFromString(raw_bytes)
-            return sv.value.strip()
-        except Exception as e:
-            logger.warning(f"decode_attribute_value: StringValue parse failed ({e})")
-            return value
-
-    # Unknown typeUrl — return the hex string as-is so no data is lost
-    logger.warning(f"decode_attribute_value: unhandled typeUrl={type_url!r}, returning value as-is")
-    return value
-
 
 def get_entity_attribute(
     entity_id: str,
@@ -214,24 +94,10 @@ def get_entity_attribute(
     with httpx.Client(timeout=REQUEST_TIMEOUT) as client:
         response = client.get(url, params=params)
 
-    result = _handle_response(response, "get_entity_attribute")
-
+    result = handle_response(response, "get_entity_attribute")
     if isinstance(result, dict) and "value" in result:
         result["value"] = decode_attribute_value(result["value"])
     return result
-
-
-# def _process_attribute_value(val: Any) -> Any:
-#     """Helper to decode simple strings or tabular data in attributes."""
-#     if isinstance(val, str):
-#         return decode_protobuf_name(val)
-#     elif isinstance(val, list):
-#         for row in val:
-#             if isinstance(row, dict):
-#                 for k, v in row.items():
-#                     if isinstance(v, str):
-#                         row[k] = decode_protobuf_name(v)
-#     return val
 
 
 # ---------------------------------------------------------------------------
@@ -276,9 +142,8 @@ def get_entity_relations(
     url = f"{OPENGIN_READ_API_URL}/entities/{entity_id}/relations"
     with httpx.Client(timeout=REQUEST_TIMEOUT) as client:
         response = client.post(url, json=body)
-    
-    result = _handle_response(response, "get_entity_relations")
-    # Decode names in relation objects (returned as a list)
+
+    result = handle_response(response, "get_entity_relations")
     if isinstance(result, list):
         for item in result:
             if isinstance(item, dict) and "name" in item:
