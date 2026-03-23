@@ -55,11 +55,11 @@ def register(mcp):
         Inputs:
           - `entity_id` (required): ID of the entity
           - `attribute_name` (required): name of the attribute (e.g. "budget", "population", "members")
-          - `start_time` (optional): ISO 8601 — return values valid from this time
-          - `end_time` (optional): ISO 8601 — return values valid until this time
+          - `start_time` (optional): ISO 8601 — return values which started at this time
+          - `end_time` (optional): ISO 8601 — return values which ended at this time
           - `fields` (optional): list of column names to return for tabular data; defaults to all columns
 
-        Returns one or more time-based values, each with: start, end, value.
+        Returns a string consisting of one or more time-based values, each with: start, end, value.
         If the attribute is tabular, `value` will contain rows and columns.
         """
         try:

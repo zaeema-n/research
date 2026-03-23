@@ -20,7 +20,7 @@ def register(mcp):
         Inputs:
           - `entity_id` (required): the ID of the entity
 
-        Returns a JSON object whose structure depends on the entity type.
+        Returns a string consisting of a JSON object whose structure depends on the entity type.
         """
         try:
             result = api.get_entity_metadata(entity_id)

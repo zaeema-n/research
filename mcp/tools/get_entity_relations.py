@@ -42,7 +42,7 @@ def register(mcp):
 
         If no filters are given, all relationships are returned.
 
-        Returns a list of relationships, each with: id, relatedEntityId, name, startTime, endTime, direction.
+        Returns a string consisting of a list of relationships, each with: id, relatedEntityId, name, startTime, endTime, direction.
         """
         try:
             result = api.get_entity_relations(

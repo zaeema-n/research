@@ -32,7 +32,7 @@ def register(mcp):
           - `created`: ISO 8601 datetime — filter by creation date
           - `terminated`: ISO 8601 datetime — filter by termination date
 
-        Returns a list of matching entities, each with: id, kind (major/minor), name, created, terminated.
+        Returns a string consisting of a list of matching entities, each with: id, kind (major/minor), name, created, terminated.
         """
         try:
             result = api.search_entities(
