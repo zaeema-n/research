@@ -18,12 +18,12 @@ This server acts as a bridge between LLMs (like Claude Desktop) and the OpenGIN 
 - Access to an OpenGIN Read API instance (default: `http://localhost:8081/v1`)
 
 ### Setup
-1. Clone this repository and navigate to the root directory.
+1. Clone this repository and navigate to the mcp directory.
 2. Create a virtual environment and install the dependencies:
    ```bash
    pip install -e .
    ```
-3. Create a `.env` file in the root directory (using `.env.example` as a template):
+3. Create a `.env` file in the mcp directory (using `.env.example` as a template):
    ```bash
    cp .env.example .env
    ```
