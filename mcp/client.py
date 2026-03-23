@@ -14,11 +14,6 @@ from utils import decode_protobuf_name, decode_attribute_value, handle_response
 logger = logging.getLogger(__name__)
 
 
-# ---------------------------------------------------------------------------
-# Tool: search_entities
-# POST /entities/search
-# ---------------------------------------------------------------------------
-
 def search_entities(
     *,
     id: str | None = None,
@@ -54,11 +49,6 @@ def search_entities(
     return result
 
 
-# ---------------------------------------------------------------------------
-# Tool: get_entity_metadata
-# GET /entities/{id}/metadata
-# ---------------------------------------------------------------------------
-
 def get_entity_metadata(entity_id: str) -> Any:
     with httpx.Client(timeout=REQUEST_TIMEOUT) as client:
         response = client.get(f"{OPENGIN_READ_API_URL}/entities/{entity_id}/metadata")
@@ -68,11 +58,6 @@ def get_entity_metadata(entity_id: str) -> Any:
         result["name"] = decode_protobuf_name(result["name"])
     return result
 
-
-# ---------------------------------------------------------------------------
-# Tool: get_entity_attribute
-# GET /entities/{id}/attributes/{name}
-# ---------------------------------------------------------------------------
 
 def get_entity_attribute(
     entity_id: str,
@@ -99,11 +84,6 @@ def get_entity_attribute(
         result["value"] = decode_attribute_value(result["value"])
     return result
 
-
-# ---------------------------------------------------------------------------
-# Tool: get_entity_relations
-# POST /entities/{id}/relations
-# ---------------------------------------------------------------------------
 
 def get_entity_relations(
     entity_id: str,
