@@ -23,9 +23,9 @@ This server acts as a bridge between LLMs (like Claude Desktop) and the OpenGIN 
    ```bash
    pip install -e .
    ```
-3. Create a `.env` file in the root directory (using `.env.example` as a template):
+3. Create a `.env` file in the root directory (using `env.example` as a template):
    ```bash
-   cp .env.example .env
+   cp env.example .env
    ```
 4. Update `OPENGIN_READ_API_URL` if your API is running somewhere other than localhost.
 
