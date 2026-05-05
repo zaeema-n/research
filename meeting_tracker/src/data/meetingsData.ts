@@ -15,10 +15,18 @@ export interface RTITimeline {
   dateSent: string;
   dateResponded?: string;
   status: 'awaiting' | 'available' | 'withheld';
+  description: string;
   response?: string;
   exemptionReason?: string;
   minutesLink?: string;
   meetingDetails?: MeetingDetail[];
+}
+
+export interface Mandate {
+  section: string;
+  body: string;
+  description: string;
+  frequency: string;
 }
 
 export interface MeetingBody {
@@ -29,6 +37,7 @@ export interface MeetingBody {
   actSection?: string;
   chair: string;
   composition: string;
+  mandate: Mandate[];
   frequency: {
     type: 'defined' | 'not_specified';
     interval?: string;
@@ -67,19 +76,26 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Monthly'
     },
+    mandate: [
+      { section: 'Section 4', body: 'National Security Act No. 9/2023', description: 'Council must convene once every month without exception.', frequency: 'Monthly' },
+      { section: 'Section 4', body: 'National Security Act No. 9/2023', description: 'President, PM, Minister of Defence, CDS & all intelligence heads must attend.', frequency: 'Per meeting' },
+      { section: 'Section 4', body: 'National Security Act No. 9/2023', description: 'Minutes must be recorded and retained for official reference.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-03-01',
-      status: 'awaiting'
+      status: 'awaiting',
+      description: "Meeting Minutes of National Security Council of Sri Lanka for February 2026 asking for response again as previous response was not in line with the RTI Act",
     },
     {
       dateSent: '2026-01-15',
       dateResponded: '2026-02-10',
       status: 'withheld',
+      description: "Meeting Minutes of National Security Council of Sri Lanka for January 2026",
       response:
       'Minutes withheld under Section 5(1)(a) - national security exemption',
       exemptionReason:
-      'Information classified under national security provisions'
+      'Information classified under national security provisions',
     }]
 
   },
@@ -96,10 +112,15 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Quarterly'
     },
+    mandate: [
+      { section: 'Section 7', body: 'Defence Procurement Act No. 12/2021', description: 'Council must meet at least once per quarter to review procurement.', frequency: 'Quarterly' },
+      { section: 'Section 7', body: 'Defence Procurement Act No. 12/2021', description: 'Secretary of Defence, Financial Secretary & all service chiefs required.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-01-20',
-      status: 'awaiting'
+      status: 'awaiting',
+      description: 'Meeting Minutes of Defence Acquisition and Procurement Council for December 2025 seeking response within 14 days',
     }]
 
   }]
@@ -121,35 +142,41 @@ export const ministriesData: Ministry[] = [
     frequency: {
       type: 'not_specified'
     },
+    mandate: [
+      { section: 'Section 3', body: 'Office on Missing Persons Act No. 14/2016', description: 'Board must convene regularly to fulfil its statutory mandate.', frequency: 'Regular' },
+      { section: 'Section 3', body: 'Office on Missing Persons Act No. 14/2016', description: 'Minimum quorum of four of the seven board members required.', frequency: 'Per meeting' },
+      { section: 'Section 5', body: 'Office on Missing Persons Act No. 14/2016', description: 'Decisions and resolutions must be recorded in official minutes.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-03-05',
       dateResponded: '2026-03-20',
       status: 'available',
+      description: 'Minutes of last three meetings provided',
       response: 'Minutes of last three meetings provided',
       minutesLink: '#',
       meetingDetails: [
       { date: '18th of Feb 2026', description: '157th board meeting' },
       { date: '26th of Feb 2026', description: '158th board meeting' },
-      { date: '26th of Feb 2026', description: '159th board meeting' }]
-
+      { date: '26th of Feb 2026', description: '159th board meeting' }],
     },
     {
       dateSent: '2026-01-10',
       dateResponded: '2026-02-05',
       status: 'available',
+      description: 'Partial minutes provided',
       response: 'Partial minutes provided',
       minutesLink: '#',
       meetingDetails: [
-      { date: '15th of Jan 2026', description: '156th board meeting' }]
-
+      { date: '15th of Jan 2026', description: '156th board meeting' }],
     },
     {
       dateSent: '2025-11-01',
       dateResponded: '2025-11-20',
       status: 'withheld',
+      description: 'Minutes of previous board meetings',
       response: 'Minutes withheld',
-      exemptionReason: 'Administrative delays in finalizing minutes'
+      exemptionReason: 'Administrative delays in finalizing minutes',
     }]
 
   },
@@ -166,13 +193,18 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Bi-weekly'
     },
+    mandate: [
+      { section: 'Section 2', body: 'Human Rights Commission Act No. 21/1996', description: 'Commission must meet bi-weekly to discharge its functions.', frequency: 'Bi-weekly' },
+      { section: 'Section 2', body: 'Human Rights Commission Act No. 21/1996', description: 'All five presidentially appointed commissioners must be present.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-01-12',
       dateResponded: '2026-02-15',
       status: 'available',
+      description: 'Meeting minutes provided for January 2026',
       response: 'Meeting minutes provided for January 2026',
-      minutesLink: '#'
+      minutesLink: '#',
     }]
 
   },
@@ -187,10 +219,15 @@ export const ministriesData: Ministry[] = [
     frequency: {
       type: 'not_specified'
     },
+    mandate: [
+      { section: 'Section 3', body: 'Law Commission Act No. 1/1987', description: 'Chairman and all four members must meet at regular intervals.', frequency: 'Regular' },
+      { section: 'Section 6', body: 'Law Commission Act No. 1/1987', description: 'Proceedings and recommendations must be minuted and submitted.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-02-01',
-      status: 'awaiting'
+      status: 'awaiting',
+      description: 'Minutes of previous board meetings',
     }]
 
   }]
@@ -214,22 +251,29 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Weekly'
     },
+    mandate: [
+      { section: 'Section 9', body: 'Monetary Law Act No. 58/1949', description: 'Board must convene every week to oversee monetary policy.', frequency: 'Weekly' },
+      { section: 'Section 9', body: 'Monetary Law Act No. 58/1949', description: 'Governor and all six ministerially appointed members required.', frequency: 'Per meeting' },
+      { section: 'Section 11', body: 'Monetary Law Act No. 58/1949', description: 'Minutes of each meeting must be signed and filed officially.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-03-10',
       dateResponded: '2026-03-25',
       status: 'withheld',
+      description: 'Minutes withheld',
       response: 'Minutes withheld under Section 5(1)(d)',
-      exemptionReason: 'Ongoing policy formulation'
+      exemptionReason: 'Ongoing policy formulation',
     },
     {
       dateSent: '2026-01-08',
       dateResponded: '2026-01-25',
       status: 'withheld',
+      description: 'Minutes withheld',
       response:
       'Minutes withheld under Section 5(1)(d) - commercial confidentiality',
       exemptionReason:
-      'Monetary policy deliberations contain market-sensitive information'
+      'Monetary policy deliberations contain market-sensitive information',
     }]
 
   },
@@ -245,14 +289,19 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Monthly'
     },
+    mandate: [
+      { section: 'Section 3', body: 'Securities and Exchange Commission Act No. 36/1987', description: 'Commission must hold at least one meeting per month.', frequency: 'Monthly' },
+      { section: 'Section 3', body: 'Securities and Exchange Commission Act No. 36/1987', description: 'Chairman and all four ministerially appointed members must attend.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-01-18',
       dateResponded: '2026-02-12',
       status: 'available',
+      description: 'Minutes of December 2025 and January 2026 meetings provided',
       response:
       'Minutes of December 2025 and January 2026 meetings provided',
-      minutesLink: '#'
+      minutesLink: '#',
     }]
 
   }]
@@ -276,10 +325,15 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Monthly'
     },
+    mandate: [
+      { section: 'Section 4', body: 'National Medicines Regulatory Authority Act No. 5/2015', description: 'Authority must convene monthly to review regulatory matters.', frequency: 'Monthly' },
+      { section: 'Section 4', body: 'National Medicines Regulatory Authority Act No. 5/2015', description: 'Chairman and all eight expert members in medicine and pharmacy required.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-01-22',
-      status: 'awaiting'
+      status: 'awaiting',
+      description: 'Minutes of previous board meetings',
     }]
 
   },
@@ -296,10 +350,15 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Quarterly'
     },
+    mandate: [
+      { section: 'Section 3', body: 'Medical Ordinance No. 10/1927', description: 'Council must convene at minimum once every quarter.', frequency: 'Quarterly' },
+      { section: 'Section 3', body: 'Medical Ordinance No. 10/1927', description: 'All elected and appointed members representing the profession must attend.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-02-05',
-      status: 'awaiting'
+      status: 'awaiting',
+      description: 'Minutes of previous board meetings',
     }]
 
   },
@@ -315,13 +374,18 @@ export const ministriesData: Ministry[] = [
     frequency: {
       type: 'not_specified'
     },
+    mandate: [
+      { section: 'Section 5', body: 'National Health Services Act No. 9/2018', description: 'Board must meet regularly to govern national health services.', frequency: 'Regular' },
+      { section: 'Section 5', body: 'National Health Services Act No. 9/2018', description: 'Director General of Health and all teaching hospital representatives required.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-01-28',
       dateResponded: '2026-02-20',
       status: 'available',
+      description: 'Minutes of last two meetings provided',
       response: 'Minutes of last two meetings provided',
-      minutesLink: '#'
+      minutesLink: '#',
     }]
 
   }]
@@ -345,13 +409,18 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Quarterly'
     },
+    mandate: [
+      { section: 'Section 4', body: 'National Institute of Education Act No. 28/1985', description: 'Council must convene once every quarter.', frequency: 'Quarterly' },
+      { section: 'Section 4', body: 'National Institute of Education Act No. 28/1985', description: 'Director General and all university and education sector members required.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-01-14',
       dateResponded: '2026-02-08',
       status: 'available',
+      description: 'Minutes of Q4 2025 meeting provided',
       response: 'Minutes of Q4 2025 meeting provided',
-      minutesLink: '#'
+      minutesLink: '#',
     }]
 
   },
@@ -367,10 +436,15 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Monthly'
     },
+    mandate: [
+      { section: 'Section 18', body: 'Universities Act No. 16/1978', description: 'Commission must hold at least one meeting per month.', frequency: 'Monthly' },
+      { section: 'Section 18', body: 'Universities Act No. 16/1978', description: 'Chairman and all presidentially appointed members must be present.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-02-03',
-      status: 'awaiting'
+      status: 'awaiting',
+      description: 'Minutes of previous board meetings',
     }]
 
   }]
@@ -392,15 +466,20 @@ export const ministriesData: Ministry[] = [
     frequency: {
       type: 'not_specified'
     },
+    mandate: [
+      { section: 'Section 3', body: 'Foreign Service Act No. 19/2006', description: 'Commission must convene regularly to oversee foreign service conduct.', frequency: 'Regular' },
+      { section: 'Section 3', body: 'Foreign Service Act No. 19/2006', description: 'Chairman and all four members with diplomatic experience required.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-01-25',
       dateResponded: '2026-02-18',
       status: 'withheld',
+      description: 'Minutes withheld',
       response:
       'Minutes withheld under Section 5(1)(a) - international relations exemption',
       exemptionReason:
-      'Discussions contain sensitive diplomatic information'
+      'Discussions contain sensitive diplomatic information',
     }]
 
   }]
@@ -423,10 +502,15 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Monthly'
     },
+    mandate: [
+      { section: 'Section 3', body: 'National Transport Commission Act No. 37/1991', description: 'Commission must hold at least one meeting every month.', frequency: 'Monthly' },
+      { section: 'Section 3', body: 'National Transport Commission Act No. 37/1991', description: 'Chairman and all six ministerially appointed members required.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-01-30',
-      status: 'awaiting'
+      status: 'awaiting',
+      description: 'Minutes of previous board meetings',
     }]
 
   },
@@ -443,13 +527,18 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Bi-monthly'
     },
+    mandate: [
+      { section: 'Section 4', body: 'Road Development Authority Act No. 73/1981', description: 'Board must convene at least once every two months.', frequency: 'Bi-monthly' },
+      { section: 'Section 4', body: 'Road Development Authority Act No. 73/1981', description: 'Chairman and all engineering and planning sector members required.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-02-02',
       dateResponded: '2026-02-22',
       status: 'available',
+      description: 'Minutes of January 2026 meeting provided',
       response: 'Minutes of January 2026 meeting provided',
-      minutesLink: '#'
+      minutesLink: '#',
     }]
 
   }]
@@ -472,13 +561,18 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Quarterly'
     },
+    mandate: [
+      { section: 'Section 3', body: 'National Environmental Act No. 47/1980', description: 'Board must convene once per quarter to review environmental matters.', frequency: 'Quarterly' },
+      { section: 'Section 3', body: 'National Environmental Act No. 47/1980', description: 'Chairman and all members with environmental expertise required.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-01-16',
       dateResponded: '2026-02-14',
       status: 'available',
+      description: 'Minutes of Q4 2025 meeting provided',
       response: 'Minutes of Q4 2025 meeting provided',
-      minutesLink: '#'
+      minutesLink: '#',
     }]
 
   },
@@ -493,10 +587,15 @@ export const ministriesData: Ministry[] = [
     frequency: {
       type: 'not_specified'
     },
+    mandate: [
+      { section: 'Section 4', body: 'Forest Ordinance No. 16/1907', description: 'Council must convene regularly to coordinate conservation policy.', frequency: 'Regular' },
+      { section: 'Section 4', body: 'Forest Ordinance No. 16/1907', description: 'Conservator General and all regional conservators must be present.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-02-06',
-      status: 'awaiting'
+      status: 'awaiting',
+      description: 'Minutes of previous board meetings',
     }]
 
   }]
@@ -519,13 +618,18 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Monthly'
     },
+    mandate: [
+      { section: 'Section 3', body: 'Paddy Marketing Board Act No. 14/1971', description: 'Board must hold at least one meeting per month.', frequency: 'Monthly' },
+      { section: 'Section 3', body: 'Paddy Marketing Board Act No. 14/1971', description: 'Chairman and all farmer and trader representatives required.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-01-19',
       dateResponded: '2026-02-11',
       status: 'available',
+      description: 'Minutes of December 2025 and January 2026 provided',
       response: 'Minutes of December 2025 and January 2026 provided',
-      minutesLink: '#'
+      minutesLink: '#',
     }]
 
   }]
@@ -549,10 +653,15 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Bi-weekly'
     },
+    mandate: [
+      { section: 'Section 3', body: 'Public Utilities Commission Act No. 35/2002', description: 'Commission must convene bi-weekly to regulate utility services.', frequency: 'Bi-weekly' },
+      { section: 'Section 3', body: 'Public Utilities Commission Act No. 35/2002', description: 'Chairman and all four presidentially appointed commissioners required.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-01-21',
-      status: 'awaiting'
+      status: 'awaiting',
+      description: 'Minutes of previous board meetings',
     }]
 
   },
@@ -569,13 +678,18 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Monthly'
     },
+    mandate: [
+      { section: 'Section 4', body: 'Ceylon Electricity Board Act No. 17/1969', description: 'Board must hold at least one meeting per month.', frequency: 'Monthly' },
+      { section: 'Section 4', body: 'Ceylon Electricity Board Act No. 17/1969', description: 'Chairman and all members with engineering and financial expertise required.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-02-04',
       dateResponded: '2026-02-25',
       status: 'available',
+      description: 'Minutes of January 2026 meeting provided',
       response: 'Minutes of January 2026 meeting provided',
-      minutesLink: '#'
+      minutesLink: '#',
     }]
 
   }]
@@ -599,24 +713,30 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Weekly'
     },
+    mandate: [
+      { section: 'Article 55', body: 'Constitution of Sri Lanka', description: 'Commission must convene every week to exercise constitutional functions.', frequency: 'Weekly' },
+      { section: 'Article 55', body: 'Constitution of Sri Lanka', description: 'Chairman and all members appointed by the President (with Parliamentary approval) required.', frequency: 'Per meeting' },
+      { section: 'Article 55', body: 'Constitution of Sri Lanka', description: 'All decisions must be formally recorded and communicated to relevant state bodies.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-03-01',
       dateResponded: '2026-03-15',
       status: 'available',
+      description: 'Summary minutes of February meetings provided',
       response: 'Summary minutes of February meetings provided',
       minutesLink: '#',
       meetingDetails: [
       { date: '04th Feb 2026', description: 'Weekly meeting' },
-      { date: '11th Feb 2026', description: 'Weekly meeting' }]
-
+      { date: '11th Feb 2026', description: 'Weekly meeting' }],
     },
     {
       dateSent: '2026-01-11',
       dateResponded: '2026-02-07',
       status: 'available',
+      description: 'Summary minutes of January meetings provided',
       response: 'Summary minutes of January meetings provided',
-      minutesLink: '#'
+      minutesLink: '#',
     }]
 
   },
@@ -632,15 +752,20 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Monthly'
     },
+    mandate: [
+      { section: 'Section 2', body: 'National Police Commission Act No. 1/1994', description: 'Commission must convene at least once a month.', frequency: 'Monthly' },
+      { section: 'Section 2', body: 'National Police Commission Act No. 1/1994', description: 'Chairman and all four presidentially appointed members must attend.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-01-17',
       dateResponded: '2026-02-13',
       status: 'withheld',
+      description: 'Minutes withheld',
       response:
       'Minutes withheld under Section 5(1)(b) - law enforcement exemption',
       exemptionReason:
-      'Discussions contain sensitive police operational matters'
+      'Discussions contain sensitive police operational matters',
     }]
 
   }]
@@ -664,10 +789,15 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Quarterly'
     },
+    mandate: [
+      { section: 'Section 4', body: 'Tourism Act No. 38/2005', description: 'Authority must hold at least one meeting per quarter.', frequency: 'Quarterly' },
+      { section: 'Section 4', body: 'Tourism Act No. 38/2005', description: 'Chairman and all tourism industry stakeholder members required.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-02-07',
-      status: 'awaiting'
+      status: 'awaiting',
+      description: 'Minutes of previous board meetings',
     }]
 
   }]
@@ -691,13 +821,18 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Monthly'
     },
+    mandate: [
+      { section: 'Section 3', body: 'Consumer Affairs Authority Act No. 9/2003', description: 'Authority must meet at least once every month.', frequency: 'Monthly' },
+      { section: 'Section 3', body: 'Consumer Affairs Authority Act No. 9/2003', description: 'Chairman and all consumer rights and trade members required.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-01-23',
       dateResponded: '2026-02-16',
       status: 'available',
+      description: 'Minutes of December 2025 and January 2026 provided',
       response: 'Minutes of December 2025 and January 2026 provided',
-      minutesLink: '#'
+      minutesLink: '#',
     }]
 
   }]
@@ -721,10 +856,15 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Quarterly'
     },
+    mandate: [
+      { section: 'Section 3', body: 'Employees Provident Fund Act No. 15/1958', description: 'Board must convene at least once per quarter.', frequency: 'Quarterly' },
+      { section: 'Section 3', body: 'Employees Provident Fund Act No. 15/1958', description: 'Commissioner and all employer and employee representatives required.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-01-26',
-      status: 'awaiting'
+      status: 'awaiting',
+      description: 'Minutes of previous board meetings',
     }]
 
   },
@@ -739,10 +879,15 @@ export const ministriesData: Ministry[] = [
     frequency: {
       type: 'not_specified'
     },
+    mandate: [
+      { section: 'Section 31B', body: 'Industrial Disputes Act No. 43/1950', description: 'Board must meet regularly to administer tribunal functions.', frequency: 'Regular' },
+      { section: 'Section 31B', body: 'Industrial Disputes Act No. 43/1950', description: 'President and all members with labour law expertise must attend.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-02-08',
-      status: 'awaiting'
+      status: 'awaiting',
+      description: 'Minutes of previous board meetings',
     }]
 
   }]
@@ -766,13 +911,18 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Bi-monthly'
     },
+    mandate: [
+      { section: 'Section 3', body: 'Sports Act No. 25/1973', description: 'Council must convene at least once every two months.', frequency: 'Bi-monthly' },
+      { section: 'Section 3', body: 'Sports Act No. 25/1973', description: 'Chairman and all national sports association members required.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-01-29',
       dateResponded: '2026-02-21',
       status: 'available',
+      description: 'Minutes of December 2025 meeting provided',
       response: 'Minutes of December 2025 meeting provided',
-      minutesLink: '#'
+      minutesLink: '#',
     }]
 
   }]
@@ -795,10 +945,15 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Monthly'
     },
+    mandate: [
+      { section: 'Section 4', body: 'ICTA Act No. 19/2003', description: 'Board must hold at least one meeting per month.', frequency: 'Monthly' },
+      { section: 'Section 4', body: 'ICTA Act No. 19/2003', description: 'Chairman and all members with ICT expertise required.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-02-01',
-      status: 'awaiting'
+      status: 'awaiting',
+      description: 'Minutes of previous board meetings',
     }]
 
   },
@@ -814,13 +969,18 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Bi-weekly'
     },
+    mandate: [
+      { section: 'Section 3', body: 'Sri Lanka Telecommunications Act No. 25/1991', description: 'Commission must convene bi-weekly to regulate the sector.', frequency: 'Bi-weekly' },
+      { section: 'Section 3', body: 'Sri Lanka Telecommunications Act No. 25/1991', description: 'Director General and all commissioners must be present.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-01-24',
       dateResponded: '2026-02-17',
       status: 'available',
+      description: 'Minutes of January 2026 meetings provided',
       response: 'Minutes of January 2026 meetings provided',
-      minutesLink: '#'
+      minutesLink: '#',
     }]
 
   }]
@@ -843,19 +1003,23 @@ export const ministriesData: Ministry[] = [
       type: 'defined',
       interval: 'Monthly'
     },
+    mandate: [
+      { section: 'Section 3', body: 'Urban Development Authority Act No. 41/1978', description: 'Authority must hold at least one meeting per month.', frequency: 'Monthly' },
+      { section: 'Section 3', body: 'Urban Development Authority Act No. 41/1978', description: 'Chairman and all urban planning expert members required.', frequency: 'Per meeting' },
+    ],
     rtiHistory: [
     {
       dateSent: '2026-01-27',
       dateResponded: '2026-02-19',
       status: 'available',
+      description: 'Minutes of January 2026 meeting provided',
       response: 'Minutes of January 2026 meeting provided',
-      minutesLink: '#'
+      minutesLink: '#',
     }]
 
   }]
 
 }];
-
 
 export function calculateStats() {
   const totalBodies = ministriesData.reduce(
@@ -865,11 +1029,23 @@ export function calculateStats() {
 
   const totalRtisSent = ministriesData.reduce(
     (sum, ministry) =>
-    sum +
-    ministry.bodies.reduce(
-      (bodySum, body) => bodySum + body.rtiHistory.length,
-      0
-    ),
+      sum +
+      ministry.bodies.reduce(
+        (bodySum, body) =>
+          bodySum + body.rtiHistory.filter((r) => r.dateSent).length,
+        0
+      ),
+    0
+  );
+
+  const totalRtisResponded = ministriesData.reduce(
+    (sum, ministry) =>
+      sum +
+      ministry.bodies.reduce(
+        (bodySum, body) =>
+          bodySum + body.rtiHistory.filter((r) => r.dateResponded).length,
+        0
+      ),
     0
   );
 
@@ -886,6 +1062,7 @@ export function calculateStats() {
     ministries: ministriesData.length,
     totalBodies,
     totalRtisSent,
+    totalRtisResponded,
     minutesAvailable
   };
 }

@@ -5,6 +5,7 @@ import {
   ArrowLeftIcon,
   CalendarIcon,
   FileTextIcon,
+  Users,
   UsersIcon,
   ScaleIcon,
   ClockIcon,
@@ -137,7 +138,6 @@ export function BodyDetailPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white rounded-xl border border-slate-200 p-6 space-y-4">
             <h3 className="text-lg font-semibold text-slate-900 mb-4">
               Body Information
@@ -174,13 +174,43 @@ export function BodyDetailPage() {
               <FileTextIcon className="w-5 h-5 text-slate-400 mt-0.5 flex-shrink-0" />
               <div>
                 <div className="text-sm font-medium text-slate-500 mb-1">
+                  Mandates
+                </div>
+                <div className="text-slate-900 flex items-center gap-2">{body.mandate.map((mandate, index) => (
+                  <div key={index} className="last:mb-0 border p-2 border-slate-200 rounded-lg">
+                    <div className="font-medium">{mandate.description}</div>
+                    {mandate.body && (
+                      <div className="text-sm text-slate-600">
+                        {mandate.body}
+                      </div>
+                    )}
+                    {mandate.section && (
+                      <div className="text-sm text-slate-600">
+                        {mandate.section}
+                      </div>
+                    )}
+                    
+                    {mandate.frequency && (
+                      <div className="text-sm text-slate-600">
+                        {mandate.frequency}
+                      </div>
+                    )}
+                  </div>
+                ))}</div>
+              </div>
+            </div>
+
+            {/* <div className="flex items-start gap-3">
+              <FileTextIcon className="w-5 h-5 text-slate-400 mt-0.5 flex-shrink-0" />
+              <div>
+                <div className="text-sm font-medium text-slate-500 mb-1">
                   Composition
                 </div>
                 <div className="text-slate-900">{body.composition}</div>
               </div>
-            </div>
+            </div> */}
 
-            <div className="flex items-start gap-3">
+            {/* <div className="flex items-start gap-3">
               <CalendarIcon className="w-5 h-5 text-slate-400 mt-0.5 flex-shrink-0" />
               <div>
                 <div className="text-sm font-medium text-slate-500 mb-1">
@@ -192,12 +222,12 @@ export function BodyDetailPage() {
                   'Not specified in enabling Act'}
                 </div>
               </div>
-            </div>
-          </div>
+            </div> */}
+          
 
-          <MeetingsTable body={body} />
+         
         </div>
-
+        <MeetingsTable body={body} />
         <div className="bg-white rounded-xl border border-slate-200 p-6">
           <div className="flex items-center gap-2 mb-6">
             <HistoryIcon className="w-5 h-5 text-slate-900" />
@@ -260,7 +290,7 @@ export function BodyDetailPage() {
                         {rti.dateResponded &&
                         <div>
                             <div className="text-slate-500 mb-1">
-                              Date Responded
+                              Date of Last Response
                             </div>
                             <div className="font-medium text-slate-900">
                               {new Date(rti.dateResponded).toLocaleDateString(
@@ -275,6 +305,13 @@ export function BodyDetailPage() {
                           </div>
                         }
                       </div>
+
+                      <div className="mb-4">
+                        <div className="text-sm text-slate-500 mb-1">Description</div>
+                        <p className="text-sm text-slate-900 bg-white/50 p-3 rounded-lg border border-slate-100">{rti.description}</p>
+                      </div>
+
+
 
                       {rti.response &&
                       <div className="mb-4">
@@ -304,7 +341,7 @@ export function BodyDetailPage() {
                             className="flex items-center justify-between text-sm bg-white p-2.5 rounded border border-slate-100 hover:bg-gray-50 transition-colors">
                             
                                 <div className="flex items-center gap-2">
-                                  <FileTextIcon className="w-4 h-4 text-emerald-600" />
+                                  <Users className="w-4 h-4 text-emerald-600" />
                                   <span className="font-medium text-slate-700">
                                     {meeting.description}
                                   </span>
@@ -330,6 +367,7 @@ export function BodyDetailPage() {
                             <div className="text-sm text-red-800">
                               {rti.exemptionReason}
                             </div>
+                            <p className="text-sm underline cursor-pointer hover:text-red-700 transition-colors">Click here for more information</p>
                           </div>
                         </div>
                       }
